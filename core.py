@@ -28,7 +28,7 @@ def get_all_games(fresh=False, max_age=None):
     return ALL_GAMES['applist']['apps']
 
 
-def get_game_review_stats(appid, name, max_age=None):
+def get_game_review_stats(appid, name='unspecified', max_age=None, scrape=None):
     print(f"Getting {appid} - {name}")
     assert max_age is None, 'max_age not implemented'
 
@@ -37,7 +37,7 @@ def get_game_review_stats(appid, name, max_age=None):
     if os.path.isfile(path):
         print("exists")
         data = json.load(open(path))
-    else:
+    elif scrape is not False:
         stamp = datetime.datetime.now().strftime('%Y%m%d')
         data = requests.get(f"http://store.steampowered.com/appreviews/{appid}?json=1").json()
         #print(data)
@@ -45,6 +45,9 @@ def get_game_review_stats(appid, name, max_age=None):
         data['stamp'] = stamp
         json.dump(data, open(path, 'w+'))
         time.sleep(2)
+    else:
+        print("missing")
+        return None
 
     return data
 
